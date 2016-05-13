@@ -1,8 +1,6 @@
 /* CONFIGURABLE VARIABLES */
 var surveyData = 'https://raw.githubusercontent.com/FreeCodeCamp/2016-new-coder-survey/master/data/2016%20New%20Coders%20Part%202.csv';
 var worldJSON = 'https://raw.githubusercontent.com/krisgesling/d3-play/master/world-geo2-min.json';
-var width = 900;
-var height = width/7*4;
 // Title of fields in dataset
 var countryField = "Which country are you a citizen of?";
 var genderField = "What's your gender?";
