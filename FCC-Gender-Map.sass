@@ -1,0 +1,155 @@
+$colorFemale: #FF1493
+$colorATQ: #FFFF00
+$colorMale: #000080
+$colorNoData: #fff
+$colorDarkGrey: #333
+$colorLightGrey: #ccc
+$colorEM: #EE7600
+
+body
+  display: flex
+  justify-content: center
+  font-family: 'arial', sans-serif
+
+.overlay
+  fill: none
+  pointer-events: all
+
+#tooltip
+  position: absolute
+  visibility: visible
+  opacity: 1
+  transition: visibility 0s, opacity 0.3s linear
+  background-color: rgba(255,255,255,0.8)
+  color: black
+  padding: 0 15px 15px
+  border-radius: 5px
+  max-width: 400px
+  &.hidden
+    visibility: hidden
+    opacity: 0
+    transition: visibility 0s, opacity 0.3s linear
+  .inner-cont
+    display: flex
+    flex-direction: column
+    div
+      display: flex
+      flex-direction: row
+      &:nth-last-child(n+2)
+        margin-bottom: 1em
+
+  .tooltip-graph
+    margin-right: 10px
+    &#em-graph
+      width: 100px
+      height: 2.1em
+      background-color: $colorLightGrey
+      //box-shadow: inset 1px 1px 1px $colorLightGrey
+      border-radius: 3px
+      div
+        top: 0.25em
+        height: 1.7em
+        margin: 0.2em
+        //box-shadow: 1px 1px 1px $colorLightGrey
+        border-radius: 2px
+        background-color: $colorEM
+        p
+          position: relative
+          top: -0.6em
+
+  .tooltip-data
+    width: 12em
+    p, ul
+      margin: -1em 0!important
+    ul
+      list-style: square
+      background-color: rgba(0,0,0,0.8)
+      padding: 10px 10px 0.2em 30px
+      border-radius: 3px
+      span
+        color: white
+      li
+        margin-bottom: 0.3em
+        &:nth-last-child(1)
+          list-style: none
+          border-top: 1px solid white
+          padding-top: 0.3em
+        &.ATQ
+          color: $colorATQ
+        &.female
+          color: $colorFemale
+        &.male
+          color: $colorMale
+        &.NR
+          color: $colorNoData
+        &.em
+          color: $colorEM
+    &#em-data
+      ul
+        padding-top: 0.2em
+        padding-bottom: 0.2em
+      li
+        &:nth-last-child(1)
+        list-style: square
+        border: none
+        padding: none
+
+#map-legend
+  margin-top: -20px
+  background: $colorDarkGrey
+  font-weight: 500
+  max-width: 900px
+  .legend-colors, .legend-total
+    display: flex
+    justify-content: center
+    margin: 10px
+    div
+      display: flex
+      justify-content: center
+      align-items: center
+      padding: 0.4em 0.6em
+      width: 10%
+      height: 1em
+      font-weight: 700
+      color: black //$colorDarkGrey
+      &:nth-child(4)
+        color: #fff
+      &:nth-child(5)
+        color: #fff
+      &:nth-child(n+6)
+        color: $colorLightGrey
+      &:nth-child(1)
+        margin-left: 10px
+      &:nth-last-child(1)
+        margin-right: 10px
+  p
+    padding: 20px 20px 0 20px
+  h3
+    margin: 20px 20px 10px 20px
+
+  p,h3
+    display: block
+    align-self: flex-start
+    color: white
+
+  ul
+    list-style: square
+    margin: 10px 20px 10px
+    padding-bottom: 40px
+    span
+      color: white
+    li
+      float: right
+      margin-left: 2.2em
+      &.ATQ
+        color: $colorATQ
+      &.female
+        color: $colorFemale
+      &.male
+        color: $colorMale
+      &.NR
+        color: $colorNoData
+      &.em
+        color: $colorEM
+      &:nth-last-child(1)
+        color: $colorDarkGrey

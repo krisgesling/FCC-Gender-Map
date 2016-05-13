@@ -1,0 +1,220 @@
+body {
+  display: flex;
+  justify-content: center;
+  font-family: "arial", sans-serif;
+}
+
+.container {
+  margin: 0 10%;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+#tooltip {
+  position: absolute;
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s, opacity 0.3s linear;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: black;
+  padding: 0 15px 15px;
+  border-radius: 5px;
+  max-width: 400px;
+}
+#tooltip.hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s linear;
+}
+#tooltip .inner-cont {
+  display: flex;
+  flex-direction: column;
+}
+#tooltip .inner-cont div {
+  display: flex;
+  flex-direction: row;
+}
+#tooltip .inner-cont div:nth-last-child(n+2) {
+  margin-bottom: 1em;
+}
+#tooltip .tooltip-graph {
+  margin-right: 10px;
+}
+#tooltip .tooltip-graph#em-graph {
+  width: 100px;
+  height: 2.1em;
+  background-color: #ccc;
+  border-radius: 3px;
+}
+#tooltip .tooltip-graph#em-graph div {
+  top: 0.25em;
+  height: 1.7em;
+  margin: 0.2em;
+  border-radius: 2px;
+  background-color: #EE7600;
+}
+#tooltip .tooltip-graph#em-graph div p {
+  position: relative;
+  top: -0.6em;
+}
+#tooltip .tooltip-data {
+  width: 12em;
+}
+#tooltip .tooltip-data p, #tooltip .tooltip-data ul {
+  margin: -1em 0 !important;
+}
+#tooltip .tooltip-data ul {
+  list-style: square;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px 10px 0.2em 30px;
+  border-radius: 3px;
+}
+#tooltip .tooltip-data ul span {
+  color: white;
+}
+#tooltip .tooltip-data ul li {
+  margin-bottom: 0.3em;
+}
+#tooltip .tooltip-data ul li:nth-last-child(1) {
+  list-style: none;
+  border-top: 1px solid white;
+  padding-top: 0.3em;
+}
+#tooltip .tooltip-data ul li.ATQ {
+  color: #FFFF00;
+}
+#tooltip .tooltip-data ul li.female {
+  color: #FF1493;
+}
+#tooltip .tooltip-data ul li.male {
+  color: #000080;
+}
+#tooltip .tooltip-data ul li.NR {
+  color: #fff;
+}
+#tooltip .tooltip-data ul li.em {
+  color: #EE7600;
+}
+#tooltip .tooltip-data#em-data ul {
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+#tooltip .tooltip-data#em-data li {
+  list-style: square;
+  border: none;
+  padding: none;
+}
+
+#map-legend {
+  margin-top: -20px;
+  background: #333;
+  font-weight: 500;
+  max-width: 100%;
+}
+#map-legend .legend-colors {
+  flex-wrap: wrap;
+}
+#map-legend .legend-colors div {
+  min-width: 4.5em;
+}
+#map-legend .legend-colors, #map-legend .legend-total {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+#map-legend .legend-colors div, #map-legend .legend-total div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.4em 0.6em;
+  height: 1em;
+  font-weight: 700;
+  color: black;
+}
+#map-legend .legend-colors div:nth-child(4), #map-legend .legend-total div:nth-child(4) {
+  color: #fff;
+}
+#map-legend .legend-colors div:nth-child(5), #map-legend .legend-total div:nth-child(5) {
+  color: #fff;
+}
+#map-legend .legend-colors div:nth-child(n+6), #map-legend .legend-total div:nth-child(n+6) {
+  color: #ccc;
+}
+#map-legend .legend-total div:nth-child(1) {
+  margin-left: 10px;
+}
+#map-legend .legend-total div:nth-last-child(1) {
+  margin-right: 10px;
+}
+#map-legend p {
+  padding: 20px 20px 0 20px;
+}
+#map-legend h3 {
+  margin: 20px 20px 10px 20px;
+}
+#map-legend p, #map-legend h3 {
+  display: block;
+  align-self: flex-start;
+  color: white;
+}
+#map-legend ul {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  list-style: square;
+  margin: 10px 20px 10px;
+  padding-bottom: 40px;
+}
+#map-legend ul span {
+  color: white;
+}
+#map-legend ul li {
+  flex: 0 0 auto;
+  margin-left: 2.2em;
+}
+#map-legend ul li.ATQ {
+  color: #FFFF00;
+}
+#map-legend ul li.female {
+  color: #FF1493;
+}
+#map-legend ul li.male {
+  color: #000080;
+}
+#map-legend ul li.NR {
+  color: #fff;
+}
+#map-legend ul li.em {
+  color: #EE7600;
+}
+#map-legend ul li:nth-last-child(1) {
+  color: #333;
+}
+
+@media (max-width: 1000px) {
+  #map-legend ul {
+    flex-direction: column-reverse;
+  }
+  #map-legend ul li {
+    margin-left: 0;
+  }
+  #map-legend ul li:nth-last-child(1) {
+    -webkit-order: -1;
+    order: -1;
+    margin-top: 0.3em;
+    padding-top: 0.3em;
+  }
+  #map-legend ul li:nth-last-child(1) span {
+    padding-top: 0.3em;
+    border-top: 1px solid white;
+  }
+}
+@media (max-width: 510px) {
+  #map-legend .legend-colors div {
+    font-size: 0.9em;
+    padding: 0.3em 0.1em;
+  }
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"></meta>
+    <meta content="width=device-width, initial-scale=1">
+    <title>FCC Gender Map</title>
+    <link rel="stylesheet" type="text/css" href="FCC-Gender-Map.css">
+  </head>
+  <body>
+
+    <div class="container">
+      <div id="gender-map">
+      </div>
+      <div id="tooltip" class="hidden">
+        <h3 id="tooltip-title"></h3>
+        <div class="inner-cont">
+          <div>
+            <div class="tooltip-graph" id="gender-graph"></div>
+            <p class="tooltip-data" id="gender-data"></p>
+          </div>
+          <div>
+            <div class="tooltip-graph" id="em-graph"></div>
+            <p class="tooltip-data" id="em-data"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"></script>
+    <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="FCC-Gender-Map.js"></script>
+
+  </body>
+</html>
