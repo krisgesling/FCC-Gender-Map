@@ -106,26 +106,6 @@ body {
 #tooltip .tooltip-data ul li {
   margin-bottom: 0.3em;
 }
-#tooltip .tooltip-data ul li:nth-last-child(1) {
-  list-style: none;
-  border-top: 1px solid white;
-  padding-top: 0.3em;
-}
-#tooltip .tooltip-data ul li.ATQ {
-  color: #FFFF00;
-}
-#tooltip .tooltip-data ul li.female {
-  color: #FF1493;
-}
-#tooltip .tooltip-data ul li.male {
-  color: #000080;
-}
-#tooltip .tooltip-data ul li.NR {
-  color: #fff;
-}
-#tooltip .tooltip-data ul li.em {
-  color: #EE7600;
-}
 #tooltip .tooltip-data#em-data ul {
   padding-top: 0.2em;
   padding-bottom: 0.2em;
@@ -202,21 +182,6 @@ body {
 #map-legend ul li {
   flex: 0 0 auto;
   margin-left: 2.2em;
-}
-#map-legend ul li.ATQ {
-  color: #FFFF00;
-}
-#map-legend ul li.female {
-  color: #FF1493;
-}
-#map-legend ul li.male {
-  color: #000080;
-}
-#map-legend ul li.NR {
-  color: #fff;
-}
-#map-legend ul li.em {
-  color: #EE7600;
 }
 #map-legend ul li:nth-last-child(1) {
   color: #333;

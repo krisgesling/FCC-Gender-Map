@@ -1,8 +1,7 @@
 /*** TODO
-All - proportion of coders living in their home country
-OR number of coders in each continent
-Ethnicity - proportion of ethnic minorities across the world
 Age - breakdown of age on global
+Hover over - pie graph of age breakdown
+AGE GRAPH CURRENTLY BROKEN - NOT REPORTING AGES CORRECTLY
 ***/
 
 /* CONFIGURABLE VARIABLES */
@@ -16,17 +15,18 @@ var height = width/7*4;
 var maps = ['all','gender','ethnicity','age'];
 // Title of fields in dataset
 var countryField = "CountryCitizen";
+var countryAltField = "CountryLive";
 var genderField = "Gender";
 var ethnicityField = "IsEthnicMinority";
 var ageField = "Age";
-// defines the [type, breakpoints between colors for map fill, and description for legend]
+// defines the [type, [breakpoints between colors for map fill], description for legend, [country.properties keys for global stats], [descriptors for global stats], [keys for tooltip stats if diff from global], [descriptors for tooltip stats]
 var mapFill = {
-  all: ['num', [20, 100, 500, 1000],'Number of survey respondents per country.', ['Africa', 'Asia', 'Europe', 'North America', 'South America', 'Oceania'], ['Africa', 'Asia', 'Europe', 'North America', 'South America', 'Oceania']],
+  all: ['num', [20, 100, 500, 1000],'Number of survey respondents per country of citizenship.', ['Africa', 'Asia', 'Europe', 'North America', 'South America', 'Oceania'], ['Africa', 'Asia', 'Europe', 'North America', 'South America', 'Oceania'], ['citizen', 'nonCitizen'], ['Citizen', 'Non-Citizen']],
   gender: ['percent', [0.15,0.25,0.35,0.45],'Proportion of female, trans*, agender and genderqueer respondents.', ['male', 'female', 'ATQ', 'NR'], ['Male', 'Female', 'Trans*, Genderqueer or Agender', 'No response']],
   ethnicity: ['percent', [0.20,0.3,0.4,0.6], 'Proportion of respondents who are members of an ethnic minority in their country.', ['ethnicMajority', 'ethnicity'], ['Ethnic Majority', 'Ethnic minority']],
   age: ['num', [21, 25, 29, 33], 'Average age of respondents per country.', [0, 1, 2, 3, 4], ['0-21', '22-25', '26-29', '30-33', '34+']]
     };
-// Color assignment - remember to also change sass variables
+// Color assignment - remember to also change sass variables // TODO Shift all modifiable colors to JS
 var colors = {
   all: {
     spectrum: ['#c9df8a','#77ab59','#36802d','#234d20', '#112610'],
@@ -35,7 +35,9 @@ var colors = {
     Europe: '#640500',
     'North America': '#E67800',
     'South America': '#1D002C',
-    Oceania: '#36802d'
+    Oceania: '#36802d',
+    citizen: 'red',
+    nonCitizen: 'blue'
   },
   gender: {
     spectrum: ['#9777A8','#6B2A8F','#500A76','#3A0358','#1D002C'],
@@ -52,29 +54,20 @@ var colors = {
   age: {
     spectrum: ['#FFB86B','#FF9420','#E67800','#7F4200', '#170C00']
   },
-  female: '#FF1493',
-  ATQ: '#FFFF00',
-  male: '#000050',
-  water: '#add8e6',
   NR: '#fff',
+  water: '#add8e6',
   path: ['#333','0.2px'],
 };
-colors['pie'] = [colors['ATQ'], colors['female'], colors['male'], colors['NR']];
 
 /* OTHER VARIABLE ASSIGNMENT */
 var activeGraph = 'all';
 var graphData = {};
-var liArr = ['NR','ATQ','female','male'];
-var liArrDesc = ['No response', 'Trans*, Genderqueer or Agender', 'Female', 'Male'];
 var globalStats = {}
-function initGlobalStats() {
-  for (var map in mapFill) {
-    for (var j = 0; j < mapFill[map][3].length; j++) {
-      globalStats[mapFill[map][3][j]] = 0;
-    }
+for (var map in mapFill) {
+  for (var j = 0; j < mapFill[map][3].length; j++) {
+    globalStats[mapFill[map][3][j]] = 0;
   }
 }
-initGlobalStats();
 
 /* FUNCTIONS */
 function loadData(data) {
@@ -92,6 +85,8 @@ function loadData(data) {
       this.age = [0,0,0,0,0];
       this.totalAges = 0;
       this.avgAge = 0;
+      this.citizen = 0;
+      this.nonCitizen = 0;
     }
 
     function countGenderByCountry(e,i,arr) {
@@ -114,6 +109,12 @@ function loadData(data) {
         graphData[countryName] = new Country(countryNameDisplay);
       }
       graphData[countryName].total++;
+      // Count for nonCitizen
+      if (data[i][countryField] != data[i][countryAltField]) {
+        graphData[countryName].nonCitizen ++;
+      } else {
+        graphData[countryName].citizen ++;
+      }
       // Increment relevant gender field
       switch (data[i][genderField]) {
         case 'female':
@@ -188,7 +189,7 @@ function continentCount(e, i, arr) { // must call after geo data is loaded
 }
 // END FUNCTION continentCount
 
-function pieChart(dataSet,selector) {
+function pieChart(dataSet, selector, chartColors) {
   // General use function to create a pie chart
   // config variables
   var pieWidth = 100;
@@ -215,7 +216,11 @@ function pieChart(dataSet,selector) {
                 .attr('transform','translate(' + outerRadius + ', ' + outerRadius + ')');
   arcs.append('path')
       .attr('fill', function(d,i) {
-        return colors.pie[i];
+        if (typeof(chartColors) !== 'object') {
+          return color(i);
+        } else {
+          return chartColors[i];
+        }
       })
       .attr('d',arc);
 } // END pieChart function
@@ -238,6 +243,7 @@ function sizeChange() {
 }
 // END FUNCTION sizeChange
 
+// TODO Change to if statement, reintegrate to parent function?
 function fillToLegendConv(num) {
   switch (activeGraph) {
     case 'all':
@@ -250,6 +256,7 @@ function fillToLegendConv(num) {
       return num;
   }
 }
+// END FUNCTION fillToLegendConv
 
 function renderMap() {
   d3.json(worldJSON,function(json) {
@@ -320,10 +327,11 @@ function renderMap() {
 
     var globalLegend = legend.append('ul');
     //var globalStatsWidth
-    console.log(globalStats);
+//    console.log(globalStats);
     for (var i = mapFill[activeGraph][3].length-1; i >= 0 ; i--) {
       globalLegend.append('li')
-                  .attr('class', 'legend-color ' + mapFill[activeGraph][3][i])
+                  .attr('style', 'color: ' + colors[activeGraph][mapFill[activeGraph][3][i]])
+//                  .attr('class', 'legend-color ' + mapFill[activeGraph][3][i])
                   .html('<span>' + percentify(globalStats[mapFill[activeGraph][3][i]],globalTotal) + ' ' + mapFill[activeGraph][4][i] + '</span>');
     }
     globalLegend.append('li')
@@ -398,19 +406,30 @@ function renderMap() {
                 .style('display','none');
             } else {
               // create pie chart and legend
-              pieChart([d.properties.ATQ, d.properties.female, d.properties.male, d.properties.NR],'#gender-graph');
-              var femaleText = '<li class="legend-color female"><span>' + percentify(d.properties.female,totalRespondents) + ' Female</span></li>';
-              var maleText = '<li class="legend-color male"><span>' + percentify(d.properties.male,totalRespondents) + ' Male</span></li>';
-              var atqText = '<li class="legend-color ATQ"><span>' + percentify(d.properties.ATQ,totalRespondents) + ' Genderqueer, <br>Trans* or Agender</span></li>';
-              var noResponseText = d.properties.NR ? '<li class="legend-color NR"><span>' + percentify(d.properties.NR,totalRespondents) + ' no response</span></li>' : '';
-              if (d.properties.male > d.properties.female) {
-                var orderedText = maleText + femaleText + atqText;
-              } else {
-                var orderedText = femaleText + maleText + atqText;
+              var tooltipChartItems = [];
+              var tooltipChartColors = [];
+              switch (activeGraph) {
+                case 'all':
+                  var tooltipArrIndex = 5;
+                  break;
+                default:
+                  var tooltipArrIndex = 3;
+                  break;
               }
-              var tooltipData = '<ul>' + orderedText + noResponseText + '<li class="legend-color"><span>' + totalRespondents + ' Total</span></li></ul>';
+              for (var i = 0; i < mapFill[activeGraph][tooltipArrIndex].length; i++) {
+                tooltipChartItems.push(d.properties[mapFill[activeGraph][tooltipArrIndex][i]]);
+                tooltipChartColors.push(colors[activeGraph][mapFill[activeGraph][tooltipArrIndex][i]]);
+              }
+//console.log('Chart items: ' + tooltipChartItems + '. Of type: ');
+//console.log(typeof(tooltipChartItems[1]));
+              pieChart(tooltipChartItems, '#gender-graph', tooltipChartColors);
+              var tooltipData = '<ul>';
+              for (var i = 0; i < mapFill[activeGraph][tooltipArrIndex].length; i++) {
+                tooltipData += '<li style="color: ' + colors[activeGraph][mapFill[activeGraph][tooltipArrIndex][i]] + '"><span>' + percentify(tooltipChartItems[i], totalRespondents) + ' ' + mapFill[activeGraph][tooltipArrIndex + 1][i] + '</span></li>';
+              }
+              tooltipData += '</ul>';
 
-            // Create ethnic minority stacked bar graph
+/*            // Create ethnic minority stacked bar graph
             // text positioning
             var percentage = parseInt(d.properties.ethnicity / totalRespondents * 100 );
             var percSide = 'left';
@@ -432,6 +451,7 @@ function renderMap() {
               .style(percSide, ( percentage + 5 + 'px' ));
             d3.select('#em-data')
               .html('<ul><li class="legend-color em"><span>Ethnic minority</span></li></ul>');
+*/
             }
 
             d3.select('#tooltip-title')
