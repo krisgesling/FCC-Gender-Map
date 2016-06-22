@@ -71,23 +71,6 @@ body {
 #tooltip .tooltip-graph {
   margin-right: 10px;
 }
-#tooltip .tooltip-graph#em-graph {
-  width: 100px;
-  height: 2.1em;
-  background-color: #ccc;
-  border-radius: 3px;
-}
-#tooltip .tooltip-graph#em-graph div {
-  top: 0.25em;
-  height: 1.7em;
-  margin: 0.2em;
-  border-radius: 2px;
-  background-color: #EE7600;
-}
-#tooltip .tooltip-graph#em-graph div p {
-  position: relative;
-  top: -0.6em;
-}
 #tooltip .tooltip-data {
   width: 12em;
 }
@@ -105,15 +88,6 @@ body {
 }
 #tooltip .tooltip-data ul li {
   margin-bottom: 0.3em;
-}
-#tooltip .tooltip-data#em-data ul {
-  padding-top: 0.2em;
-  padding-bottom: 0.2em;
-}
-#tooltip .tooltip-data#em-data li {
-  list-style: square;
-  border: none;
-  padding: none;
 }
 
 #map-legend {

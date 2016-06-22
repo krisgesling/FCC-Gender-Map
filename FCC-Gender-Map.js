@@ -21,23 +21,23 @@ var ethnicityField = "IsEthnicMinority";
 var ageField = "Age";
 // defines the [type, [breakpoints between colors for map fill], description for legend, [country.properties keys for global stats], [descriptors for global stats], [keys for tooltip stats if diff from global], [descriptors for tooltip stats]
 var mapFill = {
-  all: ['num', [20, 100, 500, 1000],'Number of survey respondents per country of citizenship.', ['Africa', 'Asia', 'Europe', 'North America', 'South America', 'Oceania'], ['Africa', 'Asia', 'Europe', 'North America', 'South America', 'Oceania'], ['citizen', 'nonCitizen'], ['Citizen', 'Non-Citizen']],
+  all: ['num', [20, 100, 500, 1000],'Number of survey respondents per country of citizenship.', ['North America', 'Europe', 'Asia', 'South America', 'Africa', 'Oceania'], ['North America', 'Europe', 'Asia', 'South America', 'Africa', 'Oceania'], ['citizen', 'nonCitizen'], ['Citizen', 'Non-Citizen']],
   gender: ['percent', [0.15,0.25,0.35,0.45],'Proportion of female, trans*, agender and genderqueer respondents.', ['male', 'female', 'ATQ', 'NR'], ['Male', 'Female', 'Trans*, Genderqueer or Agender', 'No response']],
   ethnicity: ['percent', [0.20,0.3,0.4,0.6], 'Proportion of respondents who are members of an ethnic minority in their country.', ['ethnicMajority', 'ethnicity'], ['Ethnic Majority', 'Ethnic minority']],
-  age: ['num', [21, 25, 29, 33], 'Average age of respondents per country.', [0, 1, 2, 3, 4], ['0-21', '22-25', '26-29', '30-33', '34+']]
+  age: ['num', [21, 25, 29, 33], 'Average age of respondents per country.', [0, 1, 2, 3, 4, 5], [' aged 0-21', ' aged 22-25', ' aged 26-29', ' aged 30-33', ' aged 34+', ' no response']]
     };
 // Color assignment - remember to also change sass variables // TODO Shift all modifiable colors to JS
 var colors = {
   all: {
     spectrum: ['#c9df8a','#77ab59','#36802d','#234d20', '#112610'],
-    Africa: '#500A76',
-    Asia: '#7F4200',
-    Europe: '#640500',
-    'North America': '#E67800',
-    'South America': '#1D002C',
-    Oceania: '#36802d',
-    citizen: 'red',
-    nonCitizen: 'blue'
+    Africa: '#17becf',
+    Asia: '#ff7f0e',
+    Europe: '#bcbd22',
+    'North America': '#1f77b4',
+    'South America': '#e377c2',
+    Oceania: '#8c564b',
+    citizen: '#c5b0d5',
+    nonCitizen: '#d62728'
   },
   gender: {
     spectrum: ['#9777A8','#6B2A8F','#500A76','#3A0358','#1D002C'],
@@ -52,7 +52,13 @@ var colors = {
     'ethnicMajority': '#DE6862'
   },
   age: {
-    spectrum: ['#FFB86B','#FF9420','#E67800','#7F4200', '#170C00']
+    spectrum: ['#FFB86B','#FF9420','#E67800','#7F4200', '#170C00'],
+    0: '#1f77b4',
+    1: '#2ca02c',
+    2: '#d62728',
+    3: '#9467bd',
+    4: '#bcbd22',
+    5: '#fff'
   },
   NR: '#fff',
   water: '#add8e6',
@@ -82,7 +88,7 @@ function loadData(data) {
       this.displayName = displayName;
       this.ethnicity = 0;
       this.ethnicMajority = 0;
-      this.age = [0,0,0,0,0];
+      this.age = [0,0,0,0,0,0];
       this.totalAges = 0;
       this.avgAge = 0;
       this.citizen = 0;
@@ -140,20 +146,28 @@ function loadData(data) {
       }
 
       // Tally age groupings based on breakpoints defined in mapFill
-      for (var j = 0; j < mapFill['age'][1].length-1; j++) {
-        if (data[i][ageField] <= mapFill['age'][1][j]) {
-          graphData[countryName].age[j]++;
-          //globalStats[j]++;
+      if (data[i][ageField] == 'NA') {
+        graphData[countryName].age[5]++;
+      } else {
+        var ageRangeArr = mapFill['age'][1];
+        for (var j = 0; j < ageRangeArr.length; j++) {
+          if (data[i][ageField] <= ageRangeArr[j]) {
+            if (ageRangeArr[j-1] && data[i][ageField] <= ageRangeArr[j-1]) {
+            } else {
+              graphData[countryName].age[j]++;
+            }
+            //globalStats[j]++;
+          }
         }
-      }
-      if (data[i][ageField] > mapFill['age'][1][4]) {
-          graphData[countryName].age[4]++;
-          //globalStats[4]++;
-      }
-      // Calculate average age of each country
-      if (data[i][ageField] !== 'NA' && parseInt(data[i][ageField]) > 5 && parseInt(data[i][ageField]) < 100) {
-        graphData[countryName].avgAge = graphData[countryName].totalAges < 1 ? parseInt(data[i][ageField]) : (graphData[countryName].avgAge * graphData[countryName].totalAges + parseInt(data[i][ageField])) / (graphData[countryName].totalAges+1);
-        graphData[countryName].totalAges ++;
+        if (data[i][ageField] > ageRangeArr[ageRangeArr.length-1]) {
+            graphData[countryName].age[4]++;
+            //globalStats[4]++;
+        }
+        // Calculate average age of each country
+        if (data[i][ageField] !== 'NA' && parseInt(data[i][ageField]) > 5 && parseInt(data[i][ageField]) < 100) {
+          graphData[countryName].avgAge = graphData[countryName].totalAges < 1 ? parseInt(data[i][ageField]) : (graphData[countryName].avgAge * graphData[countryName].totalAges + parseInt(data[i][ageField])) / (graphData[countryName].totalAges+1);
+          graphData[countryName].totalAges ++;
+        }
       }
     }
     data.forEach(countGenderByCountry);
@@ -166,13 +180,13 @@ function loadData(data) {
           globalStats[j] += parseInt(graphData[country][j]);
         }
       }
-      /*// tally age groups // BROKEN - this takes from country avg rather than raw figures.
+      // tally age groups // BROKEN - this takes from country avg rather than raw figures.
       for (var k = 0; k < graphData[country].age.length; k++ ) {
-        if (country == 'Australia') { console.log(graphData[country].age[k]) }
+        //if (country == 'Australia') { console.log(graphData[country].age[k]) }
         globalStats[k] += graphData[country].age[k];
-      }*/
+      }
     }
-  console.log(graphData.Kuwait.age);
+//  console.log(graphData.Australia.age);
 }
 // END FUNCTION loadData
 
@@ -327,7 +341,7 @@ function renderMap() {
 
     var globalLegend = legend.append('ul');
     //var globalStatsWidth
-//    console.log(globalStats);
+    console.log(globalStats);
     for (var i = mapFill[activeGraph][3].length-1; i >= 0 ; i--) {
       globalLegend.append('li')
                   .attr('style', 'color: ' + colors[activeGraph][mapFill[activeGraph][3][i]])
@@ -417,7 +431,11 @@ function renderMap() {
                   break;
               }
               for (var i = 0; i < mapFill[activeGraph][tooltipArrIndex].length; i++) {
-                tooltipChartItems.push(d.properties[mapFill[activeGraph][tooltipArrIndex][i]]);
+                if (activeGraph == 'age') {
+                  tooltipChartItems.push(d.properties.age[i]);
+                } else {
+                  tooltipChartItems.push(d.properties[mapFill[activeGraph][tooltipArrIndex][i]]);
+                }
                 tooltipChartColors.push(colors[activeGraph][mapFill[activeGraph][tooltipArrIndex][i]]);
               }
 //console.log('Chart items: ' + tooltipChartItems + '. Of type: ');
@@ -428,30 +446,6 @@ function renderMap() {
                 tooltipData += '<li style="color: ' + colors[activeGraph][mapFill[activeGraph][tooltipArrIndex][i]] + '"><span>' + percentify(tooltipChartItems[i], totalRespondents) + ' ' + mapFill[activeGraph][tooltipArrIndex + 1][i] + '</span></li>';
               }
               tooltipData += '</ul>';
-
-/*            // Create ethnic minority stacked bar graph
-            // text positioning
-            var percentage = parseInt(d.properties.ethnicity / totalRespondents * 100 );
-            var percSide = 'left';
-            if (percentage > 50) {
-              percentage -= percentage*1.5;
-              percSide = 'right';
-            }
-            d3.select('#em-graph')
-              .style('display','block')
-              .append('div')
-              .style('width', function(){
-                if (d.properties.ethnicity / totalRespondents > 0.94) {
-                  return '94%';
-                }
-                return percentify( d.properties.ethnicity, totalRespondents );
-              })
-              .html('<p>' + percentify( d.properties.ethnicity, totalRespondents) + '</p>')
-              .select('p')
-              .style(percSide, ( percentage + 5 + 'px' ));
-            d3.select('#em-data')
-              .html('<ul><li class="legend-color em"><span>Ethnic minority</span></li></ul>');
-*/
             }
 
             d3.select('#tooltip-title')
